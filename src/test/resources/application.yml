@@ -1,0 +1,41 @@
+jwt:
+  secret: seokwon
+data:
+  filename: sample.csv
+  disabled: true
+logging:
+  level:
+    ROOT: debug
+    com:
+      seokwon:
+        kim:
+          quiz:
+            bank: debug
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: debug
+  file: union.log
+  path: ./logs
+  pattern:
+    level: debug
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n"
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"
+  #spring:
+
+#  data:
+#    mongodb:
+#      database: sample
+#      username: test
+#      password: test123
+#      authentication-database: admin
+#      repositories:
+#        type: auto
+#      uri: mongodb://203.224.132.90/sample
+#spring:
+#  mongodb:
+#    embedded:
+#      storage:
+#        database-dir: "mongodb"
