@@ -1,3 +1,5 @@
+jwt:
+  secret: peanut
 data:
   filename: sample.csv
   disabled: false

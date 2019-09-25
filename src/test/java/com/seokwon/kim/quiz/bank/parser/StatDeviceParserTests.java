@@ -1,7 +1,7 @@
 package com.seokwon.kim.quiz.bank.parser;
 
-import com.seokwon.kim.quiz.bank.repository.ConnectionRepository;
-import com.seokwon.kim.quiz.bank.repository.DeviceRepository;
+import com.seokwon.kim.quiz.bank.stat.repository.ConnectionRepository;
+import com.seokwon.kim.quiz.bank.stat.repository.DeviceRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

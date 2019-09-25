@@ -15,4 +15,9 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<Object> handleNotFound( NotFoundDeviceException ex, WebRequest request ) {
         return handleExceptionInternal( ex, ex.getBody(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
+
+    @ExceptionHandler(value = { BadRequestException.class })
+    public ResponseEntity<Object> handleBadRequest( NotFoundDeviceException ex, WebRequest request ) {
+        return handleExceptionInternal( ex, ex.getBody(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 }
