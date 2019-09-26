@@ -6,6 +6,7 @@ import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -28,6 +29,7 @@ public class PredictConnectionRateService {
         this.mongoTemplate = mongoTemplate;
     }
 
+    @Cacheable(value="predictDeviceRateCache", key="#p0")
     public Double predictRateByDevice(final String deviceId) {
         AggregationResults<Document> doc = mongoTemplate.aggregate(
                 newAggregation(

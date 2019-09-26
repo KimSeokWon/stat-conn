@@ -3,16 +3,21 @@ jwt:
 data:
   filename: sample.csv
   disabled: false
+#spring:
+#  data:
+#    mongodb:
+#      database: sample
+#      username: test
+#      password: test123
+#      authentication-database: admin
+#      repositories:
+#        type: auto
+#      uri: mongodb://203.224.132.90/sample
 spring:
-  data:
-    mongodb:
-      database: sample
-      username: test
-      password: test123
-      authentication-database: admin
-      repositories:
-        type: auto
-      uri: mongodb://203.224.132.90/sample
+  mongodb:
+    embedded:
+      storage:
+        database-dir: "mongodb"
 logging:
   file: union.log
   path: ./logs

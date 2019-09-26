@@ -5,7 +5,7 @@
 ### Software 구성
 * 개발언어: Java SE 12
 * Framework: Spring Boot 2.1.8
-* Database: MongoDB
+* Database: Embeded MongoDB
 
 ## 문제 해결 전략
 ### 요구사항 분석
@@ -284,11 +284,23 @@ private static final Double calcPredict(final List<Document> documents) {
 }
 ```
 ## 빌드 및 실행 방법
-GIT 으로부터 소스 코드를 내려 받은 후 아래와 갈이 실행할 수 있다. 
+GITHUB 로부터 소스 코드를 내려 받은 후 아래와 갈이 실행할 수 있다. 
 ```
 C:/> git clone https://github.com/KimSeokWon/quiz-stats.git
-C:/> mvn build  #빌드
-C:/> mvn spring-boot:run #실행
-C:/> mvn test #단위 시험 코드
 ```
-
+단위 시험은 아래와 같이 진행한다. 단위시험 코드는 JUnit4 로 구현하였다.
+단위 시험이 종료하면 결과는 build/reports 하위에 결과 파일을 얻을 수있다.
+```
+C:/> gradle test #단위 시험 코드
+```
+어플리케이션을 실행시키기 위해서는 gradle 이 설치되어 있어야 한다. Spring boot 기반으로 작성되어있으므로 아래와 같이 명령어로 어플리케이션을 실행시킬 수 있다. 
+```
+C:/> gradle bootRun
+```
+아래와 같이 맨 아래 Started DeviceStatApplication 메시지가 나타나면 어플리케이션 실행이 성공하였다고 판단할 수 있다. 그러면, 8080 포트를 통하여 서비스에 접속 할 수 있다.
+```
+27-09-2019 03:19:41.742 [main] INFO  org.springframework.security.web.DefaultSecurityFilterChain.<init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@9c0d0bd, org.springframework.security.web.context.SecurityContextPersistenceFilter@7e58f697, org.springframework.security.web.header.HeaderWriterFilter@85ab964, org.springframework.web.filter.CorsFilter@176333ee, org.springframework.security.web.authentication.logout.LogoutFilter@667797f, com.seokwon.kim.quiz.bank.authentication.security.JwtAuthenticationFilter@143fefaf, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5cc3e49b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2ab9e43e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@18e6b72b, org.springframework.security.web.session.SessionManagementFilter@2c34402, org.springframework.security.web.access.ExceptionTranslationFilter@61d2f267, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@595fed99]
+27-09-2019 03:19:42.048 [main] INFO  org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor.initialize - Initializing ExecutorService 'applicationTaskExecutor'
+27-09-2019 03:19:45.085 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start - Tomcat started on port(s): 8080 (http) with context path ''
+27-09-2019 03:19:45.091 [main] INFO  com.seokwon.kim.quiz.bank.DeviceStatApplication.logStarted - Started DeviceStatApplication in 25.606 seconds (JVM running for 27.39)
+```

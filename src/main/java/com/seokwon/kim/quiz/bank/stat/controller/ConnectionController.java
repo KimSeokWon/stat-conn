@@ -6,6 +6,7 @@ import com.seokwon.kim.quiz.bank.stat.service.ConnectionRateStatService;
 import com.seokwon.kim.quiz.bank.stat.service.PredictConnectionRateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@EnableCaching
 @RestController @Slf4j
 @RequestMapping("/api/device-stat")
 public class ConnectionController {

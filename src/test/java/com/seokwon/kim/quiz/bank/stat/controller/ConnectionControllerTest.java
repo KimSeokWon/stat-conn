@@ -5,16 +5,23 @@ import com.seokwon.kim.quiz.bank.authentication.model.SignInRequest;
 import com.seokwon.kim.quiz.bank.authentication.model.SignUpRequest;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -25,11 +32,16 @@ import java.time.Duration;
 import java.time.Instant;
 
 @RunWith(SpringRunner.class)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ComponentScan(basePackages = {"com.seokwon.kim.quiz.bank"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient(timeout = "60000")
 public class ConnectionControllerTest {
 
     private Logger logger = LoggerFactory.getLogger(ConnectionControllerTest.class);
+
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(60);
     @Autowired
     private WebTestClient webTestClient;
 
@@ -49,7 +61,7 @@ public class ConnectionControllerTest {
         }
         ObjectMapper om = new ObjectMapper();
         try {
-            token = "Bearer " + om.readTree(bodyContent.getResponseBodyContent()).get("token").asText();
+            token = om.readTree(bodyContent.getResponseBodyContent()).get("token").asText();
         } catch ( IOException ex ) {
 
         }

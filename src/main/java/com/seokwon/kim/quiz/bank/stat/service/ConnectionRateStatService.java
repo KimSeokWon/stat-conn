@@ -10,6 +10,8 @@ import com.seokwon.kim.quiz.bank.stat.repository.DeviceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
-@Service @Slf4j
+@Service  @Slf4j
 public class ConnectionRateStatService {
 
     private final static String CONNECTION_DOC_NAME = "CONNECTION";
@@ -76,6 +78,7 @@ public class ConnectionRateStatService {
      * 연도별 최대 접속 단말기 정보 조회
      * @return
      */
+    @Cacheable(value="deviceRateCache")
     public List<DeviceRate> getMaxRateAnnually() {
 
         AggregationResults<Document> obj = this.mongoTemplate.aggregate(
@@ -137,6 +140,7 @@ public class ConnectionRateStatService {
      * @param year
      * @return
      */
+    @Cacheable(value="deviceRateCacheByYear", key="#p0")
     public List<DeviceRate> getMaxRateDeviceByYear(Integer year) {
         AggregationResults<Document> connections = this.mongoTemplate.aggregate(
                 newAggregation(
@@ -174,6 +178,7 @@ public class ConnectionRateStatService {
      * @param deviceId
      * @return
      */
+    @Cacheable(value="deviceRateCacheByDevice", key="#p0")
     public List<DeviceRate> getMaxRateYearByDevice(String deviceId)  {
         Instant instant = Instant.now();
         AggregationResults<Document> connections = this.mongoTemplate.aggregate(
@@ -229,7 +234,8 @@ public class ConnectionRateStatService {
         return list;
     }
 
-    public final String getDeviceNameById(String deviceId) {
+    @Cacheable(value = "getDeviceById", key = "#p0")
+    public String getDeviceNameById(String deviceId) {
         if ( devices.isEmpty() ) {
             setDeviceInfo();
         }
@@ -238,90 +244,4 @@ public class ConnectionRateStatService {
         }
         return devices.get(deviceId);
     }
-
-//
-//    void createTempCollections() {
-//        this.mongoTemplate.aggregate(
-//                newAggregation(
-//                        group("year")
-//                        .max("rate").as("rate"),
-//                        out("MAX_RATE_ANNUALLY")
-//                ).withOptions(newAggregationOptions().cursorBatchSize(1024*10).allowDiskUse(false).build()),
-//                CONNECTION_DOC_NAME,
-//                BasicDBObject.class
-//        );
-//        this.mongoTemplate.aggregate(
-//                newAggregation(
-//                        group("device_id")
-//                                .max("rate").as("rate"),
-//                        out("MAX_RATE_BY_DEVICE")
-//                ).withOptions(newAggregationOptions().cursorBatchSize(1024*10).allowDiskUse(false).build()),
-//                CONNECTION_DOC_NAME,
-//                BasicDBObject.class
-//        );
-//        createYearByDeviceNRate();
-//        createDeviceByYearNRate();
-//    }
-//
-//
-//
-//    /**
-//     * 단말기별 최대 접속량을 가진 연도를 조회하는 임시컬렉션을 생성한다.
-//     */
-//    private void createYearByDeviceNRate() {
-//        this.mongoTemplate.aggregate(
-//                newAggregation(
-//                        lookup("MAX_RATE_BY_DEVICE", "device_id", "_id", "max_rate_info"),
-//                        lookup("MAX_RATE_BY_DEVICE", "rate", "rate", "max_rate_info"),
-//                        project(
-//                                Fields.from(
-//                                        Fields.field("year"),
-//                                        Fields.field("rate"),
-//                                        Fields.field("device_id"),
-//                                        Fields.field("max_rate_info")
-//                                )
-//
-//                        ).and("max_rate_info").size().as("size"),
-//                        match(
-//                             Criteria.where("size").gt(0)
-//                        ),
-//                        project(
-//                                "year", "rate", "device_id"
-//                        ),
-//                        out(COLLECTION_YEAR_BY_DEVICE_MAX_RATE)
-//                ).withOptions(newAggregationOptions().cursorBatchSize(1024*10).allowDiskUse(false).build()),
-//                CONNECTION_DOC_NAME,
-//                BasicDBObject.class
-//        );
-//    }
-//
-//    /**
-//     * 연별 최대 접속량을 가진 단말기를 조회하는 임시컬렉션을 생성한다.
-//     */
-//    private void createDeviceByYearNRate() {
-//        this.mongoTemplate.aggregate(
-//                newAggregation(
-//                        lookup("MAX_RATE_ANNUALLY", "year", "_id", "max_rate_info"),
-//                        lookup("MAX_RATE_ANNUALLY", "rate", "rate", "max_rate_info"),
-//                        project(
-//                                Fields.from(
-//                                        Fields.field("year"),
-//                                        Fields.field("rate"),
-//                                        Fields.field("device_id"),
-//                                        Fields.field("max_rate_info")
-//                                )
-//
-//                        ).and("max_rate_info").size().as("size"),
-//                        match(
-//                                Criteria.where("size").gt(0)
-//                        ),
-//                        project(
-//                                "year", "rate", "device_id"
-//                        ),
-//                        out(COLLECTION_DEVICE_BY_YEAR_MAX_RATE)
-//                ).withOptions(newAggregationOptions().cursorBatchSize(1024*10).allowDiskUse(false).build()),
-//                CONNECTION_DOC_NAME,
-//                BasicDBObject.class
-//        );
-//    }
 }

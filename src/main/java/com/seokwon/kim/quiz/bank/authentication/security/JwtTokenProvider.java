@@ -37,7 +37,7 @@ public class JwtTokenProvider {
     }
     public boolean validateToken(final String token) {
         try {
-            Assert.notNull(token);
+            log.debug("TOKEN: {}", token);
             Jwts.parser().setSigningKey(
                     Base64.getEncoder().encode(secretKey.getBytes(Charset.forName("UTF-8")))
             ).parseClaimsJws(token);

@@ -33,8 +33,8 @@ logging:
 #      repositories:
 #        type: auto
 #      uri: mongodb://203.224.132.90/sample
-spring:
-  mongodb:
-    embedded:
-      storage:
-        database-dir: "mongodb"
+#  mongodb:
+#    embedded:
+#      storage:
+#        database-dir: mongodb_test
+#      features: SYNC_DELAY

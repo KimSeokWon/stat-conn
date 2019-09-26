@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seokwon.kim.quiz.bank.authentication.model.SignInRequest;
 import com.seokwon.kim.quiz.bank.authentication.model.SignUpRequest;
 import com.seokwon.kim.quiz.bank.authentication.repository.RoleRepository;
+import com.seokwon.kim.quiz.bank.authentication.repository.UserRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -12,11 +14,13 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -24,9 +28,11 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @ComponentScan(basePackages = {"com.seokwon.kim.quiz.bank"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient(timeout = "60000")
 public class AuthenticationControllerTest {
     @Autowired
     private WebTestClient webTestClient;
@@ -34,10 +40,12 @@ public class AuthenticationControllerTest {
     private Logger logger = LoggerFactory.getLogger(AuthenticationControllerTest.class);
 
     @Autowired
-    private RoleRepository roleRepository;
+    private UserRepository userRepository;
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    @Before
+    public void setup() {
+        userRepository.deleteAll();;
+    }
 
     @Test
     public void successToSignin() {
@@ -91,7 +99,7 @@ public class AuthenticationControllerTest {
 
     }
 
-    @Test(timeout = 3000000)
+    @Test
     public void successToRefresh() {
         final String token = getToken();
         Assert.assertNotNull(token);
