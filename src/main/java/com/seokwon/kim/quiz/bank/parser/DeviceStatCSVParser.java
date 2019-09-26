@@ -2,10 +2,10 @@ package com.seokwon.kim.quiz.bank.parser;
 
 
 import com.seokwon.kim.quiz.bank.exception.DeviceStatException;
-import com.seokwon.kim.quiz.bank.model.Connection;
-import com.seokwon.kim.quiz.bank.model.Device;
-import com.seokwon.kim.quiz.bank.repository.ConnectionRepository;
-import com.seokwon.kim.quiz.bank.repository.DeviceRepository;
+import com.seokwon.kim.quiz.bank.stat.model.Connection;
+import com.seokwon.kim.quiz.bank.stat.model.Device;
+import com.seokwon.kim.quiz.bank.stat.repository.ConnectionRepository;
+import com.seokwon.kim.quiz.bank.stat.repository.DeviceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
