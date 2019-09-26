@@ -1,14 +1,14 @@
 package com.seokwon.kim.quiz.bank.authentication.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data @AllArgsConstructor
+@Getter @Setter
 public class JwtAuthenticationResponse {
     private String token;
     private String tokenType = "Bearer";
 
     public JwtAuthenticationResponse(final String token) {
-        this(token, "Bearer");
+        this.token = token;
     }
 }

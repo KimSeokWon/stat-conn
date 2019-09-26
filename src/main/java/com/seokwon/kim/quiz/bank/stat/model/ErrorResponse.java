@@ -7,6 +7,6 @@ import java.io.Serializable;
 
 @Getter @AllArgsConstructor
 public class ErrorResponse implements Serializable {
-    private final int code;
+    private final boolean success;
     private final String msg;
 }

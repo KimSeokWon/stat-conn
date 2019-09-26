@@ -1,11 +1,8 @@
 package com.seokwon.kim.quiz.bank.authentication.security;
 
-import com.seokwon.kim.quiz.bank.authentication.model.User;
 import com.seokwon.kim.quiz.bank.authentication.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

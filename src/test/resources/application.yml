@@ -1,30 +1,29 @@
 jwt:
-  secret: seokwon
+  secret: peanut
 data:
   filename: sample.csv
   disabled: true
 logging:
   level:
-    ROOT: debug
+    ROOT: warn
     com:
       seokwon:
         kim:
           quiz:
-            bank: debug
+            bank: warn
     org:
       springframework:
         data:
           mongodb:
             core:
-              MongoTemplate: debug
+              MongoTemplate: warn
   file: union.log
   path: ./logs
   pattern:
-    level: debug
+    level: warn
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n"
     file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"
-  #spring:
-
+#spring:
 #  data:
 #    mongodb:
 #      database: sample
@@ -34,8 +33,8 @@ logging:
 #      repositories:
 #        type: auto
 #      uri: mongodb://203.224.132.90/sample
-#spring:
-#  mongodb:
-#    embedded:
-#      storage:
-#        database-dir: "mongodb"
+spring:
+  mongodb:
+    embedded:
+      storage:
+        database-dir: "mongodb"

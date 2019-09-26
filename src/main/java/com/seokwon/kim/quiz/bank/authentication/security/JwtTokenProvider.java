@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Date;
 
 @Component @Slf4j
@@ -21,20 +24,23 @@ public class JwtTokenProvider {
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_TIME))
-                .signWith(SignatureAlgorithm.ES512, secretKey)
+                .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encode(secretKey.getBytes(Charset.forName("UTF-8"))))
                 .compact();
     }
     public String getUsername(final String token) {
-        return parseToken(token, secretKey).getSubject();
+        return parseToken(token, Base64.getEncoder().encode(secretKey.getBytes(Charset.forName("UTF-8")))).getSubject();
     }
-    private static final Claims parseToken(final String token, final String key) {
+    private static final Claims parseToken(final String token, final byte[] key) {
         return Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(token).getBody();
     }
     public boolean validateToken(final String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Assert.notNull(token);
+            Jwts.parser().setSigningKey(
+                    Base64.getEncoder().encode(secretKey.getBytes(Charset.forName("UTF-8")))
+            ).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");

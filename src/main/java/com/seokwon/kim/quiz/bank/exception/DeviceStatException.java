@@ -1,6 +1,6 @@
 package com.seokwon.kim.quiz.bank.exception;
 
-public class DeviceStatException extends Exception {
+public class DeviceStatException extends RuntimeException {
     public static final int CANNOT_SAVE_DB = 0;
     public static final int AUTENTICATION_ERR = 1;
     private final int code;

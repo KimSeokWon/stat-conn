@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Getter @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
@@ -40,7 +42,9 @@ public class UserPrincipal implements UserDetails {
         return new UserPrincipal(
                 user.getUsername(),
                 user.getPassword(),
-                null
+                user.getRoles().stream().map(role ->
+                        new SimpleGrantedAuthority(role.getRoleName().name())
+                ).collect(Collectors.toList())
         );
     }
     @Override
