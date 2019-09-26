@@ -286,7 +286,7 @@ private static final Double calcPredict(final List<Document> documents) {
 ## 빌드 및 실행 방법
 GITHUB 로부터 소스 코드를 내려 받은 후 아래와 갈이 실행할 수 있다. 
 ```
-C:/> git clone https://github.com/KimSeokWon/quiz-stats.git
+C:/> git clone https://github.com/KimSeokWon/stat-conn.git
 ```
 단위 시험은 아래와 같이 진행한다. 단위시험 코드는 JUnit4 로 구현하였다.
 단위 시험이 종료하면 결과는 build/reports 하위에 결과 파일을 얻을 수있다.
