@@ -12,9 +12,6 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -47,8 +44,10 @@ public class ConnectionControllerTest {
 
     private String token;
 
+
     @Before
     public void signIn() {
+        webTestClient = webTestClient.mutate().responseTimeout(Duration.ofMinutes(5)).build();
         final EntityExchangeResult<byte[]> bodyContent = this.webTestClient.post().uri("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

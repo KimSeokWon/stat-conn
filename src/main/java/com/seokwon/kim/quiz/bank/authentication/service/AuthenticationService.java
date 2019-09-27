@@ -52,7 +52,9 @@ public class AuthenticationService {
     }
     public String authenticate(SignInRequest user) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken( user.getUsername(), user.getPassword())
+                new UsernamePasswordAuthenticationToken( user.getUsername(),
+                        user.getPassword()
+                )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtTokenProvider.generateToken(authentication);
