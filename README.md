@@ -283,6 +283,84 @@ private static final Double calcPredict(final List<Document> documents) {
     return polynomialFunction.value(THIS_YEAR);
 }
 ```
+----
+- JWT 를 통한 인증
+
+JWT 인증은 Spring Security 를 기반으로 구성하였다. JWT 는 기본적으로 TOKEN 기반의 인증 시스템이고 TOKEN 안에 세션 정보등을 가지고 있어 서버에서 세션을 관리하지 않아 서버 분산에 용이하다.
+
+##### 접근 권한 
+>REST API 들 중에서 인증이 필요한기능과 회원가입, 로그인과 같은 인증이 필요없은 기능을 구분하여 접근 권한이 필요한 URL Path 를 선언한다.
+```java
+    public void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .cors().and()
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests()
+                    .antMatchers("/auth/signup", "/auth/login")
+                    .permitAll()
+                .anyRequest().authenticated();
+
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+```  
+##### 회원가입
+>사용자 이름등을 입력받을 수 있으나 요구사항에 기반하여 아이디와 비밀번호만을 이용하여 회원가입하고 해당 정보가 DB에 저장된다.
+>Spring Security 는 ROLE을 인증정보에서 제공해야 하므로 임의로 ROLE_USER 를 생성하여 가입된 회원에게 부여한다.
+```java
+public User registerUser(final SignUpRequest user) {
+    if ( userRepository.findByUsername(user.getUsername()).isPresent() ) {
+        throw new BadRequestException("Username is exist already.");
+    }
+
+    User newUser = new User(
+            user.getUsername(),
+            passwordEncoder.encode(user.getPassword())
+    );
+    Role userRole = roleRepository.findByRoleName(Role.RoleName.ROLE_USER)
+            .orElseThrow(() -> new DeviceStatException(DeviceStatException.AUTENTICATION_ERR, "User role is not set."));
+    newUser.setRoles(Collections.singleton(userRole));
+
+    return userRepository.save(newUser);
+}
+```
+Username 만으로는 개인정보를 식별할 수 없으므로 암호화를 진행하지 않고 비밀번호는 JAVA 에서 BCRYPT 알고리즘을 이용하였다. 
+>이 알고리즘은 SHA256 등과 다르게 Salt 키를 별도로 관리할 필요가 없어 더 안전한 알고리즘으로 널리 알려져 있다.
+
+```java
+@Bean
+public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+}
+```
+##### 로그인
+username 과 password 가 DB 에 있는 정보와 동일하면 JWT 토큰을 생성한다. 토콘을 생성시 토큰의 만료 시간은 5시간으로 설정한다.  
+```java
+private static final int EXPIRED_TIME = 5 * 60 * 60 * 1000;
+
+public String generateToken(Authentication authentication) {
+    UserPrincipal userPrincipal = (UserPrincipal)authentication.getPrincipal();
+    return Jwts.builder()
+            .setSubject(userPrincipal.getUsername())
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_TIME))
+            .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encode(secretKey.getBytes(Charset.forName("UTF-8"))))
+            .compact();
+}
+```
+##### 토큰리프레시
+기존 발행되어 헤더에서 들어온 TOKEN 으로 Authentication 객체를 얻어와 다시 그 값으로 토큰을 생성한다.
+```java
+public String refresh() {
+    UsernamePasswordAuthenticationToken authentication =
+            (UsernamePasswordAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
+    return jwtTokenProvider.generateToken(authentication);
+}
+```
+   
+---
+
 ## 빌드 및 실행 방법
 GITHUB 로부터 소스 코드를 내려 받은 후 아래와 갈이 실행할 수 있다. 
 ```
