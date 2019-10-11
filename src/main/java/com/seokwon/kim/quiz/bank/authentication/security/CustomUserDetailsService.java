@@ -9,15 +9,25 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Hashtable;
+import java.util.Map;
+
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override @Transactional
+    private Map<String, UserDetails> userDetailsMap = new Hashtable<>();
+
+    @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        return UserPrincipal.create(userRepository.findByUsername(username).orElseThrow(() ->
+        if ( userDetailsMap.containsKey(username) ) {
+            return userDetailsMap.get(username);
+        }
+        UserDetails userDetails = UserPrincipal.create(userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("Username not found error. username: " + username)));
+        userDetailsMap.put(username, userDetails);
+        return userDetails;
     }
 
     @Transactional

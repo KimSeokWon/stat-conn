@@ -128,8 +128,9 @@ public class DeviceStatCSVParser {
      * @return 데이터셋이 저장되어 있으면 true 를 리턴한다.
      */
     private boolean isWritten() {
-        File f = new File(filename + WRITTEN_SUFFIX);
-        return f.exists();
+//        File f = new File(filename + WRITTEN_SUFFIX);
+//        return f.exists();
+        return false;
     }
 
     /**
@@ -138,9 +139,10 @@ public class DeviceStatCSVParser {
      * @throws IOException
      */
     private boolean createWrittenFile() throws IOException{
-        if ( writtenDisabled ) return true;
-        File f = new File(filename + WRITTEN_SUFFIX);
-        return f.createNewFile();
+//        if ( writtenDisabled ) return true;
+//        File f = new File(filename + WRITTEN_SUFFIX);
+//        return f.createNewFile();
+        return true;
     }
 
     /**
